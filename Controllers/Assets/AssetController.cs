@@ -1,19 +1,16 @@
 ﻿using Core.Assets.Implementation.Commands;
 using Core.Assets.Implementation.Commands.Assets;
-using Core.Assets.Implementation.Commands.Edges;
 using Core.Assets.Interfaces.Services;
 using Core.AuditTrail.Interfaces.Services;
 using Core.AuditTrail.Models;
 using Core.Database.Enums;
-using Core.Database.Models;
 using Core.Database.Tables;
 using Core.Relationships.Implementation.Commands;
 using Core.Relationships.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Core.Api.Components.Controllers.Assets
 {
