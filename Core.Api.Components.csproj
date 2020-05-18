@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Assets\src\Core.Assets.csproj" />
+    <ProjectReference Include="..\Core.AuditTrail\src\Core.AuditTrail.csproj" />
+    <ProjectReference Include="..\Core.Containers\Core.Containers.csproj" />
+    <ProjectReference Include="..\Core.Database\Core.Database.csproj" />
+    <ProjectReference Include="..\Core.Evidences\src\Core.Evidence.csproj" />
+    <ProjectReference Include="..\Core.Relationships\src\Core.Relationships.csproj" />
+    <ProjectReference Include="..\Core.Users\src\Core.Users.csproj" />
+  </ItemGroup>
+
+</Project>
