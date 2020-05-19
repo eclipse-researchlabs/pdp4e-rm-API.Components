@@ -32,7 +32,7 @@ namespace Core.Api.Components.Controllers
         public Vulnerability CreateVulnerability(CreateVulnerabilityCommand command)
         {
             var newValue = _vulnerabilityService.Create(command).Result;
-            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Vulnerabilitie, ToId = newValue.Id, CreateByUserId = HttpContext.Request.UserId() });
+            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Vulnerabilitie, ToId = newValue.Id, CreateByUserId = command.CreateByUserId });
             _auditTrailService.LogAction(AuditTrailAction.CreateVulnerabilities, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
             return newValue;
         }
