@@ -76,6 +76,9 @@ namespace Core.Api.Components.Controllers.Assets
         }
 
         [NonAction]
+        public bool UpdateIndex(UpdateAssetIndexCommand command) => _assetService.UpdateIndex(command);
+
+        [NonAction]
         public bool UpdateDfdQuestionaire(UpdateDfdQuestionaireCommand command)
         {
             _assetService.UpdateDfdQuestionaire(command);
