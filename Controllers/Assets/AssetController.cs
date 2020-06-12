@@ -16,7 +16,7 @@ namespace Core.Api.Components.Controllers.Assets
 {
     public class AssetsController : ControllerBase
     {
-        private IAssetService _assetService;
+        protected IAssetService _assetService;
         private IRelationshipService _relationshipService;
         private IAuditTrailService _auditTrailService;
 
@@ -87,6 +87,8 @@ namespace Core.Api.Components.Controllers.Assets
         }
 
         [NonAction]
+        public bool UpdateDfdType(UpdateAssetDfdTypeCommand command) => _assetService.UpdateDfdType(command);
+
         public bool DeleteAsset(string ids)
         {
             foreach (var id in ids.Split(',').ToList().ConvertAll(Guid.Parse))
