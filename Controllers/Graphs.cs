@@ -31,14 +31,20 @@ namespace Core.Api.Components.Controllers
                 resolve: context => context.DbContext.User.Where(x => !x.IsDeleted)
                 );
 
-            Field<ListGraphType<AssetGraphQl>>(
-                name: "groups",
-                resolve: context =>
-                {
-                    var dbContext = (BeawreContext)context.UserContext;
-                    var relationships = dbContext.Relationship.Where(x => x.FromType == ObjectType.AssetGroup && !x.IsDeleted).Select(x => x.FromId).ToArray();
-                    return dbContext.Assets.Where(x => relationships.Contains(x.Id) && !x.IsDeleted && x.IsGroup).ToList();
-                });
+            if (Core.Database.Config.Instance == Config.InstanceEnum.Core)
+            {
+                Field<ListGraphType<AssetGraphQl>>(
+                    name: "groups",
+                    resolve: context =>
+                    {
+                        var dbContext = (BeawreContext) context.UserContext;
+                        var relationships = dbContext.Relationship
+                            .Where(x => x.FromType == ObjectType.AssetGroup && !x.IsDeleted).Select(x => x.FromId)
+                            .ToArray();
+                        return dbContext.Assets.Where(x => relationships.Contains(x.Id) && !x.IsDeleted && x.IsGroup)
+                            .ToList();
+                    });
+            }
 
             AddQueryField(
                 name: "containers",
