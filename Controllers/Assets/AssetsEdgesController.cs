@@ -34,7 +34,7 @@ namespace Core.Api.Components.Controllers.Assets
                 ToId = command.Asset2Guid,
                 CreateByUserId = command.CreateByUserId,
                 Payload = JsonConvert.SerializeObject(new AssetEdgePayloadModel() { Name = command.Name, Asset1Anchor = command.Asset1Anchor, Asset2Anchor = command.Asset2Anchor })
-            }).Result;
+            });
             if (command.ContainerRootId.HasValue) _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Container, FromId = command.ContainerRootId.Value, ToType = ObjectType.AssetEdge, ToId = newValue.Id, CreateByUserId = command.CreateByUserId});
             return newValue;
         }
