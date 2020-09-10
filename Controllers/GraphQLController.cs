@@ -5,6 +5,8 @@ using GraphQL.Types;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,6 +60,7 @@ namespace Core.Api.Components.Controllers
             var result = await executer.ExecuteAsync(options);
             if (result.Errors?.Count > 0)
             {
+                Debug.WriteLine(string.Join("|", result.Errors.Select(x => x.Message)));
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             return result;

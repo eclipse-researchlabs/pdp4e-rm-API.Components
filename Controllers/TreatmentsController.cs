@@ -16,21 +16,30 @@ namespace Core.Api.Components.Controllers
     {
         private readonly ITreatmentService _treatmentService;
         private readonly IRelationshipService _relationshipService;
+        private IAssetService _assetService;
         private readonly IAuditTrailService _auditTrailService;
 
-        public TreatmentsController(ITreatmentService treatmentService, IRelationshipService relationshipService, IAuditTrailService auditTrailService)
+        public TreatmentsController(ITreatmentService treatmentService, IRelationshipService relationshipService, IAuditTrailService auditTrailService, IAssetService assetService)
         {
             _treatmentService = treatmentService;
             _relationshipService = relationshipService;
             _auditTrailService = auditTrailService;
+            _assetService = assetService;
         }
 
         [NonAction]
         public Treatment CreateTreatment(CreateTreatmentCommand command)
         {
             var newValue = _treatmentService.Create(command).Result;
-            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Treatment, ToId = newValue.Id, CreateByUserId = command.CreateByUserId });
-            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = command.RiskId, ToType = ObjectType.Treatment, ToId = newValue.Id, CreateByUserId = command.CreateByUserId });
+            _relationshipService.Create(new CreateRelationshipCommand()
+            {
+                FromType = _assetService.GetSingle(x => x.Id == command.AssetId) != null ? ObjectType.Asset : ObjectType.AssetEdge,
+                FromId = command.AssetId,
+                ToType = ObjectType.TreatmentPayload,
+                ToId = newValue.Payload.Id,
+                CreateByUserId = command.CreateByUserId
+            });
+
             _auditTrailService.LogAction(AuditTrailAction.CreateTreatment, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
             return newValue;
         }

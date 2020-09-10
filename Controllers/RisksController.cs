@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Core.Assets.Implementation.Commands.Treatments;
 
 namespace Core.Api.Components.Controllers
 {
@@ -18,12 +19,14 @@ namespace Core.Api.Components.Controllers
         private IRiskService _riskService;
         private IRelationshipService _relationshipService;
         private IAuditTrailService _auditTrailService;
+        private ITreatmentService _treatmentService;
 
-        public RisksController(IRiskService riskService, IRelationshipService relationshipService, IAuditTrailService auditTrailService)
+        public RisksController(IRiskService riskService, IRelationshipService relationshipService, IAuditTrailService auditTrailService, ITreatmentService treatmentService)
         {
             _riskService = riskService;
             _relationshipService = relationshipService;
             _auditTrailService = auditTrailService;
+            _treatmentService = treatmentService;
         }
 
         [NonAction]
@@ -39,7 +42,20 @@ namespace Core.Api.Components.Controllers
                 _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Risk, ToId = item });
 
             foreach (var item in command.Treatments)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Treatment, ToId = item.Id });
+            {
+                var treatment = _treatmentService.Create(new CreateTreatmentCommand()
+                {
+                    RiskId = newValue.Id,
+                    Name = item.Name,
+                    Description = item.Description,
+                    Type = item.Type
+                }).Result;
+                _relationshipService.Create(new CreateRelationshipCommand()
+                {
+                    FromType = ObjectType.Asset, ToType = ObjectType.TreatmentPayload, FromId = command.AssetId,
+                    ToId = treatment.Payload.Id
+                });
+            }
 
             _auditTrailService.LogAction(AuditTrailAction.CreateRisk, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
             return newValue;
