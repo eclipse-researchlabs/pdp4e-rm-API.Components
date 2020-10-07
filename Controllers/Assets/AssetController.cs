@@ -91,6 +91,7 @@ namespace Core.Api.Components.Controllers.Assets
 
         public bool DeleteAsset(string ids)
         {
+            if (ids == "undefined") return false;
             foreach (var id in ids.Split(',').ToList().ConvertAll(Guid.Parse))
             {
                 _assetService.Delete(id);
