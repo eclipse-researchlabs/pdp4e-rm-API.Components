@@ -38,7 +38,7 @@ namespace Core.Api.Components.Controllers.Assets
                 ToType = ObjectType.Asset,
                 ToId = newValue.Id,
                 CreateByUserId = command.CreateByUserId,
-                Payload = JsonConvert.SerializeObject(new AssetPayloadModel() { X = command.PayloadData.X, Y = command.PayloadData.Y })
+                Payload = JsonConvert.SerializeObject(new AssetPayloadModel() { X = command.PayloadData?.X, Y = command.PayloadData?.Y })
             });
             _auditTrailService.LogAction(AuditTrailAction.CreateAsset, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
             return newValue;
