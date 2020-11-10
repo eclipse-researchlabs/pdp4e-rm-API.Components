@@ -52,7 +52,9 @@ namespace Core.Api.Components.Controllers
                 }).Result;
                 _relationshipService.Create(new CreateRelationshipCommand()
                 {
-                    FromType = ObjectType.Asset, ToType = ObjectType.TreatmentPayload, FromId = command.AssetId,
+                    FromType = ObjectType.Asset,
+                    ToType = ObjectType.TreatmentPayload,
+                    FromId = command.AssetId,
                     ToId = treatment.Payload.Id
                 });
             }
@@ -84,7 +86,7 @@ namespace Core.Api.Components.Controllers
         [NonAction]
         public bool Delete(Guid assetId, Guid id)
         {
-            _relationshipService.Delete(x => x.FromType == ObjectType.Asset && x.ToType == ObjectType.Risk && x.FromId == assetId && x.ToId == id);
+            _relationshipService.Delete(x => (x.FromType == ObjectType.Asset || x.FromType == ObjectType.AssetBpmn) && x.ToType == ObjectType.Risk && x.FromId == assetId && x.ToId == id);
             return true;
         }
     }
