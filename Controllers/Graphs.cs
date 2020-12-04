@@ -22,9 +22,9 @@ namespace Core.Api.Components.Controllers
         }
     }
 
-    public class Query : QueryGraphType<BeawreContext>
+    public class Query : QueryGraphType<DatabaseContext>
     {
-        public Query(IEfGraphQLService<BeawreContext> efGraphQlService) : base(efGraphQlService)
+        public Query(IEfGraphQLService<DatabaseContext> efGraphQlService) : base(efGraphQlService)
         {
             AddQueryField(
                 name: "users",
@@ -37,7 +37,7 @@ namespace Core.Api.Components.Controllers
                     name: "groups",
                     resolve: context =>
                     {
-                        var dbContext = (BeawreContext) context.UserContext;
+                        var dbContext = (DatabaseContext) context.UserContext;
                         var relationships = dbContext.Relationship
                             .Where(x => x.FromType == ObjectType.AssetGroup && !x.IsDeleted).Select(x => x.FromId)
                             .ToArray();

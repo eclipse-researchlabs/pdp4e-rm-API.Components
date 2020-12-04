@@ -29,7 +29,7 @@ namespace Core.Api.Components.Controllers
             [FromQuery] string query,
             [FromQuery] string variables,
             [FromQuery] string operationName,
-            [FromServices]BeawreContext dbContext,
+            [FromServices]DatabaseContext dbContext,
             CancellationToken cancellation)
         {
             var jObject = ParseVariables(variables);
@@ -37,7 +37,7 @@ namespace Core.Api.Components.Controllers
         }
 
         async Task<ExecutionResult> Execute(
-            BeawreContext dbContext,
+            DatabaseContext dbContext,
             string query,
             string operationName,
             JObject variables,
