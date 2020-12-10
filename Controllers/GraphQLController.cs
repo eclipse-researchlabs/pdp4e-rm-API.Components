@@ -61,6 +61,7 @@ namespace Core.Api.Components.Controllers
             if (result.Errors?.Count > 0)
             {
                 Debug.WriteLine(string.Join("|", result.Errors.Select(x => x.Message)));
+                Console.WriteLine(string.Join("|", result.Errors.Select(x => x.Message)));
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             return result;
