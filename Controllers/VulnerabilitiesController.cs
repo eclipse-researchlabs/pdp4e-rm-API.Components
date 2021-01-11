@@ -1,4 +1,15 @@
-﻿using System;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,9 +28,9 @@ namespace Core.Api.Components.Controllers
 {
     public class VulnerabilitiesController : ControllerBase
     {
-        private IVulnerabilityService _vulnerabilityService;
-        private IRelationshipService _relationshipService;
         private IAuditTrailService _auditTrailService;
+        private IRelationshipService _relationshipService;
+        private IVulnerabilityService _vulnerabilityService;
 
         public VulnerabilitiesController(IVulnerabilityService vulnerabilityService, IRelationshipService relationshipService, IAuditTrailService auditTrailService)
         {
@@ -32,8 +43,8 @@ namespace Core.Api.Components.Controllers
         public Vulnerability CreateVulnerability(CreateVulnerabilityCommand command)
         {
             var newValue = _vulnerabilityService.Create(command).Result;
-            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Vulnerabilitie, ToId = newValue.Id, CreateByUserId = command.CreateByUserId });
-            _auditTrailService.LogAction(AuditTrailAction.CreateVulnerabilities, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Vulnerabilitie, ToId = newValue.Id, CreateByUserId = command.CreateByUserId});
+            _auditTrailService.LogAction(AuditTrailAction.CreateVulnerabilities, newValue.Id, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             return newValue;
         }
 

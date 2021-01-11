@@ -1,4 +1,15 @@
-﻿using Core.Assets.Implementation.Commands.Treatments;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using Core.Assets.Implementation.Commands.Treatments;
 using Core.Assets.Interfaces.Services;
 using Core.AuditTrail.Interfaces.Services;
 using Core.AuditTrail.Models;
@@ -14,10 +25,10 @@ namespace Core.Api.Components.Controllers
 {
     public class TreatmentsController : ControllerBase
     {
-        private readonly ITreatmentService _treatmentService;
-        private readonly IRelationshipService _relationshipService;
-        private IAssetService _assetService;
         private readonly IAuditTrailService _auditTrailService;
+        private readonly IRelationshipService _relationshipService;
+        private readonly ITreatmentService _treatmentService;
+        private IAssetService _assetService;
 
         public TreatmentsController(ITreatmentService treatmentService, IRelationshipService relationshipService, IAuditTrailService auditTrailService, IAssetService assetService)
         {
@@ -40,7 +51,7 @@ namespace Core.Api.Components.Controllers
                 CreateByUserId = command.CreateByUserId
             });
 
-            _auditTrailService.LogAction(AuditTrailAction.CreateTreatment, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            _auditTrailService.LogAction(AuditTrailAction.CreateTreatment, newValue.Id, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             return newValue;
         }
 

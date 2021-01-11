@@ -1,4 +1,15 @@
-﻿using System;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,8 +28,8 @@ namespace Core.Api.Components.Controllers
 {
     public class ContainerController : ControllerBase
     {
-        private IContainerService _containerService;
         private readonly IAuditTrailService _auditTrailService;
+        private IContainerService _containerService;
         private IRelationshipService _relationshipService;
 
         public ContainerController(IContainerService containerService, IAuditTrailService auditTrailService, IRelationshipService relationshipService)
@@ -32,14 +43,15 @@ namespace Core.Api.Components.Controllers
         public Container Create(CreateContainerCommand command)
         {
             var newValue = _containerService.Create(command).Result;
-            _auditTrailService.LogAction(AuditTrailAction.CreateContainer, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            _auditTrailService.LogAction(AuditTrailAction.CreateContainer, newValue.Id, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             if (command.ParentRootId.HasValue)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Container, ToType = ObjectType.Container, FromId = command.ParentRootId.Value, ToId = newValue.RootId, Branch = command.Branch, CreateByUserId = command.CreateByUserId });
+                _relationshipService.Create(new CreateRelationshipCommand()
+                    {FromType = ObjectType.Container, ToType = ObjectType.Container, FromId = command.ParentRootId.Value, ToId = newValue.RootId, Branch = command.Branch, CreateByUserId = command.CreateByUserId});
 
             return newValue;
         }
 
         [NonAction]
-        public bool Delete(Guid id) => _containerService.Delete(new DeleteContainerCommand() { Id = id });
+        public bool Delete(Guid id) => _containerService.Delete(new DeleteContainerCommand() {Id = id});
     }
 }

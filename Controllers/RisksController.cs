@@ -1,4 +1,15 @@
-﻿using Core.Assets.Implementation.Commands.Risks;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using Core.Assets.Implementation.Commands.Risks;
 using Core.Assets.Interfaces.Services;
 using Core.AuditTrail.Interfaces.Services;
 using Core.AuditTrail.Models;
@@ -16,9 +27,9 @@ namespace Core.Api.Components.Controllers
 {
     public class RisksController : ControllerBase
     {
-        private IRiskService _riskService;
-        private IRelationshipService _relationshipService;
         private IAuditTrailService _auditTrailService;
+        private IRelationshipService _relationshipService;
+        private IRiskService _riskService;
         private ITreatmentService _treatmentService;
 
         public RisksController(IRiskService riskService, IRelationshipService relationshipService, IAuditTrailService auditTrailService, ITreatmentService treatmentService)
@@ -33,13 +44,13 @@ namespace Core.Api.Components.Controllers
         public Risk CreateRisk(CreateRiskCommand command)
         {
             var newValue = _riskService.Create(command).Result;
-            _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Risk, ToId = newValue.Id });
+            _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Asset, FromId = command.AssetId, ToType = ObjectType.Risk, ToId = newValue.Id});
 
             foreach (var item in command.Vulnerabilities)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Vulnerabilitie, ToId = item });
+                _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Vulnerabilitie, ToId = item});
 
             foreach (var item in command.Risks)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Risk, ToId = item });
+                _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Risk, FromId = newValue.Id, ToType = ObjectType.Risk, ToId = item});
 
             foreach (var item in command.Treatments)
             {
@@ -59,7 +70,7 @@ namespace Core.Api.Components.Controllers
                 });
             }
 
-            _auditTrailService.LogAction(AuditTrailAction.CreateRisk, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            _auditTrailService.LogAction(AuditTrailAction.CreateRisk, newValue.Id, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             return newValue;
         }
 
@@ -72,13 +83,13 @@ namespace Core.Api.Components.Controllers
             _relationshipService.Delete(x => x.FromType == ObjectType.Risk && x.ToType == ObjectType.Risk && x.FromId == command.RootId);
             _relationshipService.Delete(x => x.FromType == ObjectType.Risk && x.ToType == ObjectType.Treatment && x.FromId == command.RootId);
             foreach (var item in command.Vulnerabilities)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Vulnerabilitie, ToId = item });
+                _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Vulnerabilitie, ToId = item});
 
             foreach (var item in command.Risks)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Risk, ToId = item });
+                _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Risk, ToId = item});
 
             foreach (var item in command.Treatments)
-                _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Treatment, ToId = item.Id });
+                _relationshipService.Create(new CreateRelationshipCommand() {FromType = ObjectType.Risk, FromId = command.RootId, ToType = ObjectType.Treatment, ToId = item.Id});
 
             return true;
         }

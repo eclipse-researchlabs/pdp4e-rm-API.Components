@@ -1,4 +1,15 @@
-﻿using Core.Assets.Implementation.Commands;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using Core.Assets.Implementation.Commands;
 using Core.Assets.Implementation.Commands.Assets;
 using Core.Assets.Interfaces.Services;
 using Core.AuditTrail.Interfaces.Services;
@@ -17,8 +28,8 @@ namespace Core.Api.Components.Controllers.Assets
     public class AssetsController : ControllerBase
     {
         protected IAssetService _assetService;
-        private IRelationshipService _relationshipService;
         private IAuditTrailService _auditTrailService;
+        private IRelationshipService _relationshipService;
 
         public AssetsController(IAssetService assetService, IRelationshipService relationshipService, IAuditTrailService auditTrailService)
         {
@@ -31,16 +42,17 @@ namespace Core.Api.Components.Controllers.Assets
         public Asset Create(CreateAssetCommand command)
         {
             var newValue = _assetService.Create(command).Result;
-            if (command.ContainerRootId.HasValue) _relationshipService.Create(new CreateRelationshipCommand()
-            {
-                FromType = ObjectType.Container,
-                FromId = command.ContainerRootId.Value,
-                ToType = ObjectType.Asset,
-                ToId = newValue.Id,
-                CreateByUserId = command.CreateByUserId,
-                Payload = JsonConvert.SerializeObject(new AssetPayloadModel() { X = command.PayloadData?.X, Y = command.PayloadData?.Y })
-            });
-            _auditTrailService.LogAction(AuditTrailAction.CreateAsset, newValue.Id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            if (command.ContainerRootId.HasValue)
+                _relationshipService.Create(new CreateRelationshipCommand()
+                {
+                    FromType = ObjectType.Container,
+                    FromId = command.ContainerRootId.Value,
+                    ToType = ObjectType.Asset,
+                    ToId = newValue.Id,
+                    CreateByUserId = command.CreateByUserId,
+                    Payload = JsonConvert.SerializeObject(new AssetPayloadModel() {X = command.PayloadData?.X, Y = command.PayloadData?.Y})
+                });
+            _auditTrailService.LogAction(AuditTrailAction.CreateAsset, newValue.Id, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             return newValue;
         }
 
@@ -54,7 +66,7 @@ namespace Core.Api.Components.Controllers.Assets
                 ToType = ObjectType.Asset,
                 ToId = command.AssetId,
                 CreateByUserId = command.CreateByUserId,
-                Payload = JsonConvert.SerializeObject(new AssetPayloadModel() { X = command.X, Y = command.Y })
+                Payload = JsonConvert.SerializeObject(new AssetPayloadModel() {X = command.X, Y = command.Y})
             });
             return true;
         }
@@ -63,7 +75,7 @@ namespace Core.Api.Components.Controllers.Assets
         public bool MovePosition(UpdateAssetPositionCommand command)
         {
             var newValue = _assetService.MovePosition(command).Result;
-            _auditTrailService.LogAction(AuditTrailAction.MoveAsset, command.AssetId, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(command) });
+            _auditTrailService.LogAction(AuditTrailAction.MoveAsset, command.AssetId, new AuditTrailPayloadModel() {Data = JsonConvert.SerializeObject(command)});
             return newValue;
         }
 
@@ -97,6 +109,7 @@ namespace Core.Api.Components.Controllers.Assets
                 _assetService.Delete(id);
                 //_auditTrailService.LogAction(AuditTrailAction.RemoveAssetGroup, id, new AuditTrailPayloadModel() { Data = JsonConvert.SerializeObject(id) });
             }
+
             return true;
         }
     }

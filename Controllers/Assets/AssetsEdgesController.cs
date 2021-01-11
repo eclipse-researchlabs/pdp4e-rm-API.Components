@@ -1,4 +1,15 @@
-﻿using Core.Assets.Implementation.Commands.Edges;
+﻿// /********************************************************************************
+//  * Copyright (c) 2020,2021 Beawre Digital SL
+//  *
+//  * This program and the accompanying materials are made available under the
+//  * terms of the Eclipse Public License 2.0 which is available at
+//  * http://www.eclipse.org/legal/epl-2.0.
+//  *
+//  * SPDX-License-Identifier: EPL-2.0 3
+//  *
+//  ********************************************************************************/
+
+using Core.Assets.Implementation.Commands.Edges;
 using Core.Assets.Interfaces.Services;
 using Core.Database.Enums;
 using Core.Database.Models;
@@ -14,8 +25,8 @@ namespace Core.Api.Components.Controllers.Assets
 {
     public class AssetsEdgesController : ControllerBase
     {
-        private IRelationshipService _relationshipService;
         private IAssetEdgeService _assetEdgeService;
+        private IRelationshipService _relationshipService;
 
         public AssetsEdgesController(IRelationshipService relationshipService, IAssetEdgeService assetEdgeService)
         {
@@ -33,9 +44,11 @@ namespace Core.Api.Components.Controllers.Assets
                 ToType = ObjectType.Asset,
                 ToId = command.Asset2Guid,
                 CreateByUserId = command.CreateByUserId,
-                Payload = JsonConvert.SerializeObject(new AssetEdgePayloadModel() { Name = command.Name, Asset1Anchor = command.Asset1Anchor, Asset2Anchor = command.Asset2Anchor })
+                Payload = JsonConvert.SerializeObject(new AssetEdgePayloadModel() {Name = command.Name, Asset1Anchor = command.Asset1Anchor, Asset2Anchor = command.Asset2Anchor})
             });
-            if (command.ContainerRootId.HasValue) _relationshipService.Create(new CreateRelationshipCommand() { FromType = ObjectType.Container, FromId = command.ContainerRootId.Value, ToType = ObjectType.AssetEdge, ToId = newValue.Id, CreateByUserId = command.CreateByUserId});
+            if (command.ContainerRootId.HasValue)
+                _relationshipService.Create(new CreateRelationshipCommand()
+                    {FromType = ObjectType.Container, FromId = command.ContainerRootId.Value, ToType = ObjectType.AssetEdge, ToId = newValue.Id, CreateByUserId = command.CreateByUserId});
             return newValue;
         }
 
